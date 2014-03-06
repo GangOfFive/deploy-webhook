@@ -1,6 +1,7 @@
 <?php
 
 define('TOMCAT_DIR', '/var/lib/tomcat7/webapps/');
+define('HIBERNATE_CONFIG', 'HibernateConfig.java');
 
 @list($_, $repoUrl, $repoName, $branchName) = $argv;
 
@@ -16,6 +17,17 @@ if ($repoUrl && $repoName && $branchName) {
     cdexec($dest, 'git remote update');
     cdexec($dest, 'git fetch');
     cdexec($dest, 'git checkout '.escapeshellarg($branchName));
+    
+    # create database if it doesn't exist
+    $sql = "CREATE DATABASE IF NOT EXISTS '{$branchName}'";
+    cdexec('.', 'echo '.escapeshellarg($sql).' | mysql --user="root" --password=""');
+    
+    # replace configs
+    $findHibernateConfig = '$(find . -name '.escapeshellarg(HIBERNATE_CONFIG).')';
+    $dbUrl = preg_quote('jdbc:mysql://localhost:3306/'.$branchName, '/');
+    cdexec($dest, 'sed -i \'s/url = ".*"/url = "'.$dbUrl.'"/\' '.$findHibernateConfig);
+    cdexec($dest, 'sed -i \'s/username = ".*"/username = "root"/\' '.$findHibernateConfig);
+    cdexec($dest, 'sed -i \'s/password = ".*"/password = ""/\' '.$findHibernateConfig);
 
     # package
     cdexec($dest, 'mvn package');
@@ -33,3 +45,4 @@ function cdexec($dest, $command) {
 
     return $result == 0;
 }
+
