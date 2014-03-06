@@ -19,12 +19,13 @@ if ($repoUrl && $repoName && $branchName) {
     cdexec($dest, 'git checkout '.escapeshellarg($branchName));
     
     # create database if it doesn't exist
-    $sql = "CREATE DATABASE IF NOT EXISTS '{$branchName}'";
+    $dbName = str_replace('-', '', $branchName);
+    $sql = "CREATE DATABASE IF NOT EXISTS {$dbName}";
     cdexec('.', 'echo '.escapeshellarg($sql).' | mysql --user="root" --password=""');
     
     # replace configs
     $findHibernateConfig = '$(find . -name '.escapeshellarg(HIBERNATE_CONFIG).')';
-    $dbUrl = preg_quote('jdbc:mysql://localhost:3306/'.$branchName, '/');
+    $dbUrl = preg_quote('jdbc:mysql://localhost:3306/'.$dbName, '/');
     cdexec($dest, 'sed -i \'s/url = ".*"/url = "'.$dbUrl.'"/\' '.$findHibernateConfig);
     cdexec($dest, 'sed -i \'s/username = ".*"/username = "root"/\' '.$findHibernateConfig);
     cdexec($dest, 'sed -i \'s/password = ".*"/password = ""/\' '.$findHibernateConfig);
