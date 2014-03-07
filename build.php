@@ -31,10 +31,11 @@ if ($repoUrl && $repoName && $branchName) {
     cdexec($dest, 'sed -i \'s/password = ".*"/password = ""/\' '.$findHibernateConfig);
 
     # package
-    cdexec($dest, 'mvn package');
+    cdexec($dest, 'mvn clean package');
     
     # deploy to tomcat
     $dest = $dest.'/target';
+    cdexec('.', 'rm -rf '.TOMCAT_DIR.$branchName.'.war');
     cdexec($dest, 'cp *.war '.TOMCAT_DIR.$branchName.'.war');
 }
 
