@@ -31,7 +31,7 @@ if ($repoUrl && $repoName && $branchName) {
     cdexec($dest, 'sed -i \'s/password = ".*"/password = ""/\' '.$findHibernateConfig);
 
     # package
-    cdexec($dest, 'mvn clean package');
+    cdexec($dest, 'export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8" && mvn clean package');
     
     # deploy to tomcat
     $dest = $dest.'/target';
@@ -42,9 +42,11 @@ if ($repoUrl && $repoName && $branchName) {
 function cdexec($dest, $command) {
     $result = 1;
     $command = 'cd '.escapeshellarg($dest)." && {$command}";
-    exec($command, $_, $result);
-    file_put_contents(__DIR__.'/debug.log', time().' - '.$command."\n", FILE_APPEND);
+    exec($command, $output=array(), $result);
+    
+    $data = date('m-d H:i:s').' - '.$command."\n".implode("\n", $output)."\n\n====================\n";
+    file_put_contents(__DIR__.'/debug.log', $data, FILE_APPEND);
+    echo $data;
 
     return $result == 0;
 }
-
