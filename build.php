@@ -44,13 +44,15 @@ if ($repoUrl && $repoName && $branchName) {
 function cdexec($dest, $command) {
     $result = 1;
     $command = '(cd '.escapeshellarg($dest)." && {$command}) 2>&1";
-    exec($command, $output=array(), $result);
     
     $data = date('m-d H:i:s').' - '.$command."\n";
     file_put_contents(__DIR__.'/debug.log', $data, FILE_APPEND);
-    implode("\n", $output)."\n====================\n";
+    echo $data;
+    exec($command, $output=array(), $result);
+    $data = implode("\n", $output)."\n====================\n";
     file_put_contents(__DIR__.'/debug.log', $data, FILE_APPEND);
     echo $data;
 
     return $result == 0;
 }
+
