@@ -14,7 +14,6 @@ if ($repoUrl && $repoName && $branchName) {
     
     # check out branch
     $dest = $dest.'/'.$repoName;
-    cdexec($dest, 'git remote update');
     cdexec($dest, 'git fetch');
     cdexec($dest, 'git checkout '.escapeshellarg($branchName));
     
@@ -35,16 +34,21 @@ if ($repoUrl && $repoName && $branchName) {
     
     # deploy to tomcat
     $dest = $dest.'/target';
+    cdexec('.', 'sudo service tomcat7 stop');
+    cdexec('.', 'rm -rf '.TOMCAT_DIR.$branchName);
     cdexec('.', 'rm -rf '.TOMCAT_DIR.$branchName.'.war');
     cdexec($dest, 'cp *.war '.TOMCAT_DIR.$branchName.'.war');
+    cdexec('.', 'sudo service tomcat7 start');
 }
 
 function cdexec($dest, $command) {
     $result = 1;
-    $command = 'cd '.escapeshellarg($dest)." && {$command}";
+    $command = '(cd '.escapeshellarg($dest)." && {$command}) 2>&1";
     exec($command, $output=array(), $result);
     
-    $data = date('m-d H:i:s').' - '.$command."\n".implode("\n", $output)."\n\n====================\n";
+    $data = date('m-d H:i:s').' - '.$command."\n";
+    file_put_contents(__DIR__.'/debug.log', $data, FILE_APPEND);
+    implode("\n", $output)."\n====================\n";
     file_put_contents(__DIR__.'/debug.log', $data, FILE_APPEND);
     echo $data;
 
