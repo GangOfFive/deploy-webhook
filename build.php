@@ -2,6 +2,7 @@
 
 define('TOMCAT_DIR', '/var/lib/tomcat7/webapps/');
 define('HIBERNATE_CONFIG', 'HibernateConfig.java');
+define('DEPLOYS_TO_KEEP', 2);
 
 @list($_, $repoUrl, $repoName, $branchName) = $argv;
 
@@ -17,9 +18,9 @@ if ($repoUrl && $repoName && $branchName) {
     cdexec($dest, 'git fetch');
     cdexec($dest, 'git checkout '.escapeshellarg($branchName));
     
-    # create database if it doesn't exist
+    # overwrite database
     $dbName = str_replace('-', '', $branchName);
-    $sql = "CREATE DATABASE IF NOT EXISTS {$dbName}";
+    $sql = "DROP DATABASE {$dbName}; CREATE DATABASE {$dbName}";
     cdexec('.', 'echo '.escapeshellarg($sql).' | mysql --user="root" --password=""');
     
     # replace configs
@@ -32,11 +33,20 @@ if ($repoUrl && $repoName && $branchName) {
     # package
     cdexec($dest, 'export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8" && mvn clean package');
     
-    # deploy to tomcat
+    # stop tomcat and delete current branch
     $dest = $dest.'/target';
     cdexec('.', 'sudo service tomcat7 stop');
     cdexec('.', 'rm -rf '.TOMCAT_DIR.$branchName);
     cdexec('.', 'rm -rf '.TOMCAT_DIR.$branchName.'.war');
+
+    # remove all but newest deployments
+    foreach (getdirsbydate(TOMCAT_DIR) as $i => $f) {
+        if ($i >= DEPLOYS_TO_KEEP) {
+            cdexec(TOMCAT_DIR, 'rm -rf '.$f.' '.$f.'.war');
+        }
+    }
+
+    # deploy to tomcat
     cdexec($dest, 'cp *.war '.TOMCAT_DIR.$branchName.'.war');
     cdexec('.', 'sudo service tomcat7 start');
 }
@@ -56,3 +66,11 @@ function cdexec($dest, $command) {
     return $result == 0;
 }
 
+function getdirsbydate($dir) {
+    $tmp = array();
+    foreach (glob($dir.'/*', GLOB_ONLYDIR) as $f){
+        $tmp[basename($f)] = filemtime($f);
+    }
+    arsort($tmp);
+    return array_keys($tmp);
+}
