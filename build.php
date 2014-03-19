@@ -41,7 +41,7 @@ if ($repoUrl && $repoName && $branchName) {
 
     # remove all but newest deployments
     foreach (getdirsbydate(TOMCAT_DIR) as $i => $f) {
-        if ($i >= DEPLOYS_TO_KEEP) {
+        if ($i > DEPLOYS_TO_KEEP) {
             cdexec(TOMCAT_DIR, 'rm -rf '.$f.' '.$f.'.war');
         }
     }
@@ -55,7 +55,7 @@ function cdexec($dest, $command) {
     $result = 1;
     $command = '(cd '.escapeshellarg($dest)." && {$command}) 2>&1";
     
-    $data = date('m-d H:i:s').' - '.$command."\n";
+    $data = date('Y-m-d H:i:s').' - '.$command."\n";
     file_put_contents(__DIR__.'/debug.log', $data, FILE_APPEND);
     echo $data;
     exec($command, $output=array(), $result);
