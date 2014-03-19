@@ -2,7 +2,7 @@
 
 define('TOMCAT_DIR', '/var/lib/tomcat7/webapps/');
 define('HIBERNATE_CONFIG', 'HibernateConfig.java');
-define('DEPLOYS_TO_KEEP', 2);
+define('DEPLOYS_TO_KEEP', 5);
 
 @list($_, $repoUrl, $repoName, $branchName) = $argv;
 
