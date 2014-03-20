@@ -7,6 +7,7 @@ define('DEPLOYS_TO_KEEP', 5);
 @list($_, $repoUrl, $repoName, $branchName) = $argv;
 
 if ($repoUrl && $repoName && $branchName) {
+    unlink(__DIR__.'/debug.log');
     # clone repo
     $dest = __DIR__.'/build/'.$repoName.'/'.$branchName;
     cdexec('.', 'rm -rf '.escapeshellarg($dest));
@@ -20,7 +21,7 @@ if ($repoUrl && $repoName && $branchName) {
     
     # overwrite database
     $dbName = str_replace('-', '', $branchName);
-    $sql = "DROP DATABASE {$dbName}; CREATE DATABASE {$dbName}";
+    $sql = "DROP DATABASE IF EXISTS {$dbName}; CREATE DATABASE {$dbName}";
     cdexec('.', 'echo '.escapeshellarg($sql).' | mysql --user="root" --password=""');
     
     # replace configs

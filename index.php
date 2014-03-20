@@ -14,7 +14,7 @@ function getlog() {
     foreach ($lines as $line) {
        $line = trim($line);
        if (!$line || $line[0]==='=') continue;
-       $line = substr($line,strpos($line,'&&')+2,strpos($line,') 2>&1')-strlen($line));
+       if (strpos($line,') 2>&1')!==false) $line = substr($line,strpos($line,'&&')+2,strpos($line,') 2>&1')-strlen($line));
        $ret[] = trim($line);
     }
     return $ret;
