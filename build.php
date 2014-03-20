@@ -31,7 +31,7 @@ if ($repoUrl && $repoName && $branchName) {
     cdexec($dest, 'sed -i \'s/password = ".*"/password = ""/\' '.$findHibernateConfig);
 
     # package
-    cdexec($dest, 'export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8" && mvn clean package');
+    cdexec($dest, 'export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8" && mvn clean package -Dmaven.test.skip=true');
     
     # stop tomcat and delete current branch
     $dest = $dest.'/target';
@@ -58,7 +58,7 @@ function cdexec($dest, $command) {
     $data = date('Y-m-d H:i:s').' - '.$command."\n";
     file_put_contents(__DIR__.'/debug.log', $data, FILE_APPEND);
     echo $data;
-    exec($command, $output=array(), $result);
+    exec($command, &$output, $result);
     $data = implode("\n", $output)."\n====================\n";
     file_put_contents(__DIR__.'/debug.log', $data, FILE_APPEND);
     echo $data;
