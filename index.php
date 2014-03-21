@@ -38,11 +38,14 @@ h3{opacity:.5;}
 .app{display:block; border-top: #469 1px dashed; padding: .5em 0;}
 a:link,a:visited{text-decoration: none;color: #7af;}
 a:hover{color: #9cf;background: #333;}
+#dashboard-l{border: #555 4px dashed;padding:4px;float:right;}
 </style>
 </head>
 <body>
 <div id="wrap">
-<h1>Falafel Status</h1>
+<h1>Falafel Status
+<a href="dash/" id="dashboard-l">Dashboard</a>
+</h1>
 <div id="apps">
 <h3>Branches</h3>
 <?php foreach ($apps as $app => $time): ?>
