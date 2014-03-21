@@ -37,6 +37,7 @@ if ($repoUrl && $repoName && $branchName) {
     # stop tomcat and delete current branch
     $dest = $dest.'/target';
     cdexec('.', 'sudo service tomcat7 stop');
+    cdexec('.', 'sudo chmod -R g+w '.TOMCAT_DIR.$branchName);
     cdexec('.', 'rm -rf '.TOMCAT_DIR.$branchName);
     cdexec('.', 'rm -rf '.TOMCAT_DIR.$branchName.'.war');
 
