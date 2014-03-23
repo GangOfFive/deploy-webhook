@@ -44,6 +44,7 @@ if ($repoUrl && $repoName && $branchName) {
     # remove all but newest deployments
     foreach (getdirsbydate(TOMCAT_DIR) as $i => $f) {
         if ($i > DEPLOYS_TO_KEEP) {
+            cdexec('.', 'sudo chmod -R g+w '.TOMCAT_DIR.$f);
             cdexec(TOMCAT_DIR, 'rm -rf '.$f.' '.$f.'.war');
         }
     }
