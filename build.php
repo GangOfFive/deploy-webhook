@@ -25,12 +25,17 @@ if ($repoUrl && $repoName && $branchName) {
     cdexec('.', 'echo '.escapeshellarg($sql).' | mysql --user="root" --password=""');
     
     # replace configs
-    $findHibernateConfig = '$(find . -name '.escapeshellarg(HIBERNATE_CONFIG).')';
+    # todo remove java configs after build stabilizes
+    $findHibernateConfig = '$(find . -name '.escapeshellarg(HIBERNATE_CONFIG).')'; 
+    $findProperties = '$(find -name "app.properties")';
     $dbUrl = preg_quote('jdbc:mysql://localhost:3306/'.$dbName, '/');
     cdexec($dest, 'sed -i \'s/url = ".*"/url = "'.$dbUrl.'"/\' '.$findHibernateConfig);
     cdexec($dest, 'sed -i \'s/username = ".*"/username = "root"/\' '.$findHibernateConfig);
     cdexec($dest, 'sed -i \'s/password = ".*"/password = ""/\' '.$findHibernateConfig);
 
+    cdexec($dest, 'sed -i \'s/url=.*/url='.$dbUrl.'/\' '.$findProperties);
+    cdexec($dest, 'sed -i \'s/username=.*/username=root/\' '.$findProperties);
+    cdexec($dest, 'sed -i \'s/password=.*/password=/\' '.$findProperties);
     # package
     cdexec($dest, 'export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8" && mvn clean package -Dmaven.test.skip=true');
     
