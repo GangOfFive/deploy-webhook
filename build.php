@@ -1,7 +1,6 @@
 <?php
 
 define('TOMCAT_DIR', '/var/lib/tomcat7/webapps/');
-define('HIBERNATE_CONFIG', 'HibernateConfig.java');
 define('DEPLOYS_TO_KEEP', 5);
 
 @list($_, $repoUrl, $repoName, $branchName) = $argv;
@@ -26,16 +25,12 @@ if ($repoUrl && $repoName && $branchName) {
     
     # replace configs
     # todo remove java configs after build stabilizes
-    $findHibernateConfig = '$(find . -name '.escapeshellarg(HIBERNATE_CONFIG).')'; 
-    $findProperties = '$(find -name "app.properties")';
+    $findProperties = '$(find '.escapeshellarg($dest).' -name "app.properties.sample")';
     $dbUrl = preg_quote('jdbc:mysql://localhost:3306/'.$dbName, '/');
-    cdexec($dest, 'sed -i \'s/url = ".*"/url = "'.$dbUrl.'"/\' '.$findHibernateConfig);
-    cdexec($dest, 'sed -i \'s/username = ".*"/username = "root"/\' '.$findHibernateConfig);
-    cdexec($dest, 'sed -i \'s/password = ".*"/password = ""/\' '.$findHibernateConfig);
-
     cdexec($dest, 'sed -i \'s/url=.*/url='.$dbUrl.'/\' '.$findProperties);
     cdexec($dest, 'sed -i \'s/username=.*/username=root/\' '.$findProperties);
     cdexec($dest, 'sed -i \'s/password=.*/password=/\' '.$findProperties);
+    cdexec('.', 'cd $(dirname '.$findProperties.') && mv app.properties.sample app.properties');
     # package
     cdexec($dest, 'export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8" && mvn clean package -Dmaven.test.skip=true');
     
@@ -48,7 +43,7 @@ if ($repoUrl && $repoName && $branchName) {
 
     # remove all but newest deployments
     foreach (getdirsbydate(TOMCAT_DIR) as $i => $f) {
-        if ($i > DEPLOYS_TO_KEEP) {
+        if ($i >= DEPLOYS_TO_KEEP) {
             cdexec('.', 'sudo chmod -R g+w '.TOMCAT_DIR.$f);
             cdexec(TOMCAT_DIR, 'rm -rf '.$f.' '.$f.'.war');
         }
