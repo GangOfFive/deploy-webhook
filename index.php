@@ -14,6 +14,7 @@ $apps = getdirsbydate('/var/lib/tomcat7/webapps');
 <html>
 <head>
 <title>Falafel Status</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body,html{margin:0;padding:0;background-image:url('bg.jpg');font-family: "Droid Sans","Helvetica Neue","Helvetica",sans-serif;}
 body{padding:2em;}
