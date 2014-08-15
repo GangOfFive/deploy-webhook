@@ -18,8 +18,8 @@ $apps = getdirsbydate('/var/lib/tomcat7/webapps');
 <style>
 body,html{margin:0;padding:0;background-image:url('bg.jpg');font-family: "Droid Sans","Helvetica Neue","Helvetica",sans-serif;}
 body{padding:2em;}
-#wrap{max-width:800px;background:#e0e0e0;background:rgba(255,240,255,.9);margin: 0 auto;color: #333;padding:.25em .5em;}
-h1,h2,h3,h4,h5,h6{margin: .2em 1rem; font-weight: bold;}
+#wrap{max-width:800px;background:#e0e0e0;background:rgba(255,240,255,.9);margin: 0 auto;color: #333;padding:.25em .5em;border-radius:5px;}
+h1,h2,h3,h4,h5,h6{margin: .2em 0 .2em 1rem; font-weight: bold;}
 h1{float:left;font-size:1.4em;}
 h3{opacity:.5;}
 #apps{clear:both;}
@@ -28,7 +28,7 @@ a:link,a:visited{transition:all .3s;text-decoration: none;color: #38c;}
 a:hover{color: #49d;background: #e8e8e8;background:rgba(255,240,255,.5);}
 .app p{margin: 0;margin-top:.6em;}
 .app h4 {margin: 0}
-nav{float:right;font-size:1.4em;font-weight:bold;}
+nav{float:right;font-size:1.4em;font-weight:bold;margin-right:1rem;}
 nav a{font-size:.7em;margin-left:4px;}
 @media (max-width:420px) {body{padding:0;}}
 </style>
