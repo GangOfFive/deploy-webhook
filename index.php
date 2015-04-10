@@ -38,14 +38,14 @@ nav a{font-size:.7em;margin-left:4px;}
 <div id="header">
 <h1>Falafel Status</h1>
 <nav>
-<a href="http://<?php echo $_SERVER['SERVER_NAME'];?>:8000/">Jenkins</a>
+<a href="http://falafel.villarreal.co.cr:8000/">Jenkins</a>
 <a href="dash/">Dashboard</a>
 </nav>
 </div>
 <div id="apps">
 <h3>Deployments</h3>
 <?php foreach ($apps as $app => $time): ?>
-<a href="http://<?php echo $_SERVER['SERVER_NAME'];?>:8080/<?php echo $app; ?>" class="app">
+<a href="http://falafel.villarreal.co.cr:8080/<?php echo $app; ?>" class="app">
     <h4><?php echo $app; ?></h4>
     <p>Deployed: <?php echo date('F d Y h:i:s A', $time); ?></p>
 </a>
